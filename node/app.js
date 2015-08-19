@@ -211,7 +211,7 @@ app.engine('ect', ect({ watch: true, root: __dirname + '/views', ext: '.ect' }).
 app.set('view engine', 'ect');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({ 'secret': 'isucon4-node-qualifier', resave: true, saveUninitialized: true }));
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public'), { maxAge: 31557600000 }));
 
 app.locals.strftime = function(format, date) {
   return strftime(format, date);
