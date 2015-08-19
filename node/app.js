@@ -109,8 +109,8 @@ var helpers = {
       var succeeded = !err;
       mysqlPool.query(
         'INSERT INTO login_log' +
-        ' (`created_at`, `user_id`, `login`, `ip`, `succeeded`)' +
-        ' VALUES (?,?,?,?,?)',
+        ' (`user_id`, `login`, `ip`, `succeeded`)' +
+        ' VALUES (?,?,?,?)',
         [new Date(), (user || {})['id'], login, ip, succeeded],
         function(e, rows) {
           callback(err, user);
