@@ -13,7 +13,8 @@ var strftime = require('strftime');
 var app = express();
 
 //強制マップ
-var users = {};
+var users = {},
+    users_id = {};
 
 var globalConfig = {
   userLockThreshold: process.env.ISU4_USER_LOCK_THRESHOLD || 3,
@@ -125,13 +126,14 @@ var helpers = {
   },
 
   getCurrentUser: function(user_id, callback) {
-    mysqlPool.query('SELECT * FROM users WHERE id = ?', [user_id], function(err, rows) {
-      if(err) {
-        return callback(null);
-      }
-
-      callback(rows[0]);
-    });
+      callback(users_id[user_id] || null);
+    // mysqlPool.query('SELECT * FROM users WHERE id = ?', [user_id], function(err, rows) {
+    //   if(err) {
+    //     return callback(null);
+    //   }
+    //
+    //   callback(rows[0]);
+    // });
   },
 
   getBannedIPs: function(callback) {
