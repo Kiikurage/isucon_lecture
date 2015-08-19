@@ -12,10 +12,6 @@ var strftime = require('strftime');
 
 var app = express();
 
-//強制マップ
-var users = {},
-    users_id = {};
-
 var globalConfig = {
   userLockThreshold: process.env.ISU4_USER_LOCK_THRESHOLD || 3,
   ipBanThreshold: process.env.ISU4_IP_BAN_THRESHOLD || 10
@@ -78,9 +74,9 @@ var helpers = {
 
     async.waterfall([
       function(cb) {
-        // mysqlPool.query('SELECT * FROM users WHERE login = ?', [login], function(err, rows) {
-          cb(null, users[login]);
-        // });
+        mysqlPool.query('SELECT * FROM users WHERE login = ?', [login], function(err, rows) {
+          cb(null, rows[0]);
+        });
       },
       function(user, cb) {
         helpers.isIPBanned(ip, function(banned) {
@@ -111,13 +107,11 @@ var helpers = {
       }
     ], function(err, user) {
       var succeeded = !err;
-      users[login] = user;
-      callback(err, user);
       mysqlPool.query(
         'INSERT INTO login_log' +
-        ' (`user_id`, `login`, `ip`, `succeeded`)' +
-        ' VALUES (?,?,?,?)',
-        [(user || {})['id'], login, ip, succeeded],
+        ' (`created_at`, `user_id`, `login`, `ip`, `succeeded`)' +
+        ' VALUES (?,?,?,?,?)',
+        [new Date(), (user || {})['id'], login, ip, succeeded],
         function(e, rows) {
           callback(err, user);
         }
@@ -126,14 +120,13 @@ var helpers = {
   },
 
   getCurrentUser: function(user_id, callback) {
-      callback(users_id[user_id] || null);
-    // mysqlPool.query('SELECT * FROM users WHERE id = ?', [user_id], function(err, rows) {
-    //   if(err) {
-    //     return callback(null);
-    //   }
-    //
-    //   callback(rows[0]);
-    // });
+    mysqlPool.query('SELECT * FROM users WHERE id = ?', [user_id], function(err, rows) {
+      if(err) {
+        return callback(null);
+      }
+
+      callback(rows[0]);
+    });
   },
 
   getBannedIPs: function(callback) {
