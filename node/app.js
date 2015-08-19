@@ -113,15 +113,15 @@ var helpers = {
       var succeeded = !err;
       users[login] = user;
       callback(err, user);
-    //   mysqlPool.query(
-    //     'INSERT INTO login_log' +
-    //     ' (`user_id`, `login`, `ip`, `succeeded`)' +
-    //     ' VALUES (?,?,?,?)',
-    //     [(user || {})['id'], login, ip, succeeded],
-    //     function(e, rows) {
-    //       callback(err, user);
-    //     }
-    //   );
+      mysqlPool.query(
+        'INSERT INTO login_log' +
+        ' (`user_id`, `login`, `ip`, `succeeded`)' +
+        ' VALUES (?,?,?,?)',
+        [(user || {})['id'], login, ip, succeeded],
+        function(e, rows) {
+          callback(err, user);
+        }
+      );
     });
   },
 
