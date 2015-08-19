@@ -111,7 +111,7 @@ var helpers = {
         'INSERT INTO login_log' +
         ' (`user_id`, `login`, `ip`, `succeeded`)' +
         ' VALUES (?,?,?,?)',
-        [new Date(), (user || {})['id'], login, ip, succeeded],
+        [(user || {})['id'], login, ip, succeeded],
         function(e, rows) {
           callback(err, user);
         }
